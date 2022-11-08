@@ -1,0 +1,96 @@
+[ansible@muneendra ~]$ cat play112.yml
+---
+ - name: Create a directory along with files and contents
+   hosts: all
+   become: true
+   gather_facts: no
+   tasks:
+    - name: Create a directory
+      file:
+       path: kodur
+       mode: '0755'
+       state: directory
+    - name: Create a multiple files under kodur directory
+      file:
+       path: "{{item}}"
+       state: touch
+      with_items:
+       - ssdc.txt
+       - gdc.txt
+       - vdc.txt
+    - name: Create a content with all the file of ssdc.txt
+      copy:
+       dest: kodur/ssdc.txt
+       content: |
+         college name Sri sai Degree college
+         located in kodur city,kadapa district
+    - name: Create a content with all the file of gdc.txt
+      copy:
+       dest: kodur/gdc.txt
+       content: |
+         This is Government degree college
+         only one govt degree college in kodur city
+    - name: Create a content with all the file of vdc.txt
+      copy:
+       dest: kodur/vdc.txt
+       content: |
+         This is Vasista  Degree college
+         It is also located in kodur city
+         recently started this college
+...
+
+output
+-------
+
+[ansible@muneendra ~]$ ansible-playbook --syntax-check play112.yml
+
+playbook: play112.yml
+[ansible@muneendra ~]$ ansible-playbook  play112.yml
+
+PLAY [Create a directory along with files and contents] ******************************************************************************
+
+TASK [Create a directory] ************************************************************************************************************
+changed: [192.168.7.15]
+changed: [192.168.8.15]
+
+TASK [Create a multiple files under kodur directory] *********************************************************************************
+changed: [192.168.8.15] => (item=ssdc.txt)
+changed: [192.168.7.15] => (item=ssdc.txt)
+changed: [192.168.8.15] => (item=gdc.txt)
+changed: [192.168.7.15] => (item=gdc.txt)
+changed: [192.168.7.15] => (item=vdc.txt)
+changed: [192.168.8.15] => (item=vdc.txt)
+
+TASK [Create a content with all the file of ssdc.txt] ********************************************************************************
+changed: [192.168.8.15]
+changed: [192.168.7.15]
+
+TASK [Create a content with all the file of gdc.txt] *********************************************************************************
+changed: [192.168.7.15]
+changed: [192.168.8.15]
+
+TASK [Create a content with all the file of vdc.txt] *********************************************************************************
+changed: [192.168.7.15]
+changed: [192.168.8.15]
+
+PLAY RECAP ***************************************************************************************************************************
+192.168.7.15               : ok=5    changed=5    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+192.168.8.15               : ok=5    changed=5    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+
+client side result
+-------------------
+
+[ansible@muni15 ~]$ cd kodur
+[ansible@muni15 kodur]$ ll
+total 12
+-rw-r--r-- 1 root root 77 Nov  2 12:00 gdc.txt
+-rw-r--r-- 1 root root 74 Nov  2 12:00 ssdc.txt
+-rw-r--r-- 1 root root 95 Nov  2 12:00 vdc.txt
+[ansible@muni15 kodur]$ cat gdc.txt
+This is Government degree college
+only one govt degree college in kodur city
+[ansible@muni15 kodur]$ cat ssdc.txt
+college name Sri sai Degree college
+located in kodur city,kadapa district
+[ansible@muni15 kodur]$
